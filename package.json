@@ -9,7 +9,7 @@
   "author": "hij1nx",
   "license": "MIT",
   "dependencies": {
-    "through2": "~0.2.3"
+    "through": "~2.3.4"
   },
   "devDependencies": {
     "level": "~0.17.0-1",

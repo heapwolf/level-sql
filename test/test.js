@@ -1,32 +1,59 @@
 var assert = require('assert');
 var test = require('tap').test;
 var Sublevel = require('level-sublevel');
-var Relate = require('../index');
+var sql = require('../index');
 var level = require('level');
 
-test('SELECT * from db1', function(t) {
+var db = Sublevel(level(__dirname + '/db', { valueEncoding: 'json' }));
+sql(db);
 
-  var db1 = Sublevel(level(__dirname + '/db1', { valueEncoding: 'json' }));
-  var relate = Relate(db1);
+test('SELECT * from table1', function(t) {
 
-  var table1 = db1.sublevel('table1');
+  var table1 = db.sublevel('table1');
 
   table1.batch([
-    { type: 'put', key: 'testkey1', value: 'testvalue1' },
-    { type: 'put', key: 'testkey2', value: 'testvalue2' }
+    { type: 'put', key: 'testkey1', value: { a: 'avalue1', b: 'bvalue1' } },
+    { type: 'put', key: 'testkey2', value: { a: 'avalue2', b: 'bvalue2' } }
   ], function(err) {
 
     if (err) {
       return t.notOk(true, err);
     }
 
-    var s1 = relate.query('SELECT * FROM table1');
+    var s1 = db.query('SELECT * FROM table1');
  
     var count = 0
 
     s1.on('data', function(d) {
       if (++count == 2) {
         t.ok(true, 'found all records from table1');
+        t.end();
+      }
+    });
+  });
+});
+
+test('SELECT a from table1', function(t) {
+
+  var table1 = db.sublevel('table1');
+
+  table1.batch([
+    { type: 'put', key: 'testkey1', value: { a: 'avalue1', b: 'bvalue1' } },
+    { type: 'put', key: 'testkey2', value: { a: 'avalue2', b: 'bvalue2' } }
+  ], function(err) {
+
+    if (err) {
+      return t.notOk(true, err);
+    }
+    
+    var s1 = db.query('SELECT a FROM table1');
+ 
+    var count = 0
+
+    s1.on('data', function(d) {
+      t.equal(d.value.a.indexOf('avalue'), 0, 'correct value');
+      if (++count == 2) {
+        t.ok(true, 'found two records from table1');
         t.end();
       }
     });
