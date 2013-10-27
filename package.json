@@ -1,0 +1,20 @@
+{
+  "name": "level-sql",
+  "version": "0.1.0",
+  "description": "sql for levelup",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test/test.js"
+  },
+  "author": "hij1nx",
+  "license": "MIT",
+  "dependencies": {
+    "through2": "~0.2.3"
+  },
+  "devDependencies": {
+    "level": "~0.17.0-1",
+    "jison": "~0.4.13",
+    "tap": "~0.4.4",
+    "level-sublevel": "~5.1.1"
+  }
+}
