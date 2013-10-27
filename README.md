@@ -44,3 +44,9 @@ var stream1 = db.query('SELECT a from table1');
 { "key": "key1", "value": { "a": 0 } }
 { "key": "key2", "value": { "a": 2 } }
 ```
+
+# TODO
+This is a work in progress, and I don't plan to give it a ton 
+of attention, if you like this idea, ping me and I will add you
+as a contributor.
+
