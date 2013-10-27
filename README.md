@@ -51,10 +51,11 @@ result in all the elements of all the rows where the value of column
 `K1` is `2` being shown — in Relational algebra terms, a selection 
 will be performed, because of the `WHERE` clause. This is also known 
 as a Horizontal Partition, restricting rows output by a query 
-according to specified conditions.
+according to specified conditions. There can be as many conditions
+as you want separated by `and` or `or`.
 
 ```js
-var stream1 = db.query('SELECT a from table1 WHERE a = 2');
+var stream1 = db.query('SELECT a from table1 WHERE a = 2 and a <> 1');
 ```
 
 ```json
@@ -63,6 +64,6 @@ var stream1 = db.query('SELECT a from table1 WHERE a = 2');
 
 # TODO
 This is a work in progress, and I don't plan to give it a ton 
-of attention, if you like this idea, ping me and I will add you
+of attention, if you like this idea ping me and I will add you
 as a contributor.
 
