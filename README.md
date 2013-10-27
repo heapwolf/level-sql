@@ -45,6 +45,22 @@ var stream1 = db.query('SELECT a from table1');
 { "key": "key2", "value": { "a": 2 } }
 ```
 
+### Where Clauses
+With the same table, the query `SELECT * FROM T WHERE K1 = 2` will 
+result in all the elements of all the rows where the value of column 
+`K1` is `2` being shown — in Relational algebra terms, a selection 
+will be performed, because of the `WHERE` clause. This is also known 
+as a Horizontal Partition, restricting rows output by a query 
+according to specified conditions.
+
+```js
+var stream1 = db.query('SELECT a from table1 WHERE a = 2');
+```
+
+```json
+{ "key": "key2", "value": { "a": 2 } }
+```
+
 # TODO
 This is a work in progress, and I don't plan to give it a ton 
 of attention, if you like this idea, ping me and I will add you
