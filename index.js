@@ -2,6 +2,7 @@
 var parse = require('./lib/parse').parse;
 var sublevel = require('level-sublevel');
 var through = require('through');
+var fsort = require('./lib/fsort');
 
 module.exports = function(db) {
  
@@ -11,6 +12,7 @@ module.exports = function(db) {
     
     var q = [].slice.call(arguments);
     var ast;
+    var sortable = [];
 
     try {
       ast = parse(q.join(' '));
@@ -21,6 +23,15 @@ module.exports = function(db) {
 
     // determine if there are SELECT keys
     var hasFields = Object.keys(ast.fields[0]).length;
+
+    var orderby = function(data) {
+
+      // throw away keys
+      // make an array of objects
+      // write the objects as they are sorted by fsort
+      // return the new array
+      
+    };
 
     // resolve where clauses recursively
     var where = function(ops, data) {
@@ -55,7 +66,7 @@ module.exports = function(db) {
       else if (ops.operation == 'or') {
         return right || left;
       }
-    }
+    };
 
     // apply the SELECT filter
     var filter = through(function (obj) {
@@ -86,16 +97,32 @@ module.exports = function(db) {
       }
 
       if (Object.keys(val).length) {
+        if (ast.order) {
+          return sortable.push(obj.value);
+        }
         this.push({ key: obj.key, value: val });
       }
     });
 
-    // TODO: multiple sources
-    var source1 = ast.source.name.value;
-    var table1 = db.sublevel(source1);
-    var opts1 = {};
+    var source = ast.source.name.value;
+    var table = db.sublevel(source);
+    var opts = {};
 
-    return table1.createReadStream(opts1).pipe(filter);
+    if (ast.limit && ast.limit.value) {
+      opts.limit = ast.limit.value.value;
+    }
+
+    var stream = table.createReadStream(opts).pipe(filter);
+
+    if (ast.order) {
+      var t = through();
+      stream.on('end', function() {
+        t.write(orderby(ast.fields, sortable));
+        t.end();
+      });
+      return t;
+    }
+    return stream;
   }
   return db
 };

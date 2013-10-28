@@ -62,8 +62,40 @@ var stream1 = db.query('SELECT a from table1 WHERE a = 2 and a <> 1');
 { "key": "key2", "value": { "a": 2 } }
 ```
 
+### Result Limitation Clauses
+Often it is convenient to indicate a maximum number of rows that are 
+returned. This can be used for testing or to prevent consuming excessive 
+resources if the query returns more information than expected. The 
+approach to do this often varies per vendor.
+
+```js
+var stream1 = db.query('SELECT * from table1 LIMIT 1');
+```
+
+```json
+{ "key": "key1", "value": { "a": 0 } }
+```
+
+### Ordered Results
+LevelDB is the default backend for LevelUp, so results are lexographically
+sorted by default. The ORDER BY clause in SQL specifies that a `SQL SELECT`
+statement returns a result set with the rows being sorted by the values of 
+one or more columns. The sort criteria do not have to be included in the 
+result set. The sort criteria can be expressions, including (but not
+limited to) column names, user-defined functions, arithmetic operations, 
+or CASE expressions.
+
+```js
+var stream1 = db.query('SELECT * from table1 ORDER BY a ASC');
+```
+
+```json
+{ "key": "key2", "value": { "a": 2 } }
+{ "key": "key1", "value": { "a": 0 } }
+```
+
 # TODO
 This is a work in progress, and I don't plan to give it a ton 
-of attention, if you like this idea ping me and I will add you
-as a contributor.
+of attention, if you like this idea just start sending pull requests and
+i will make you a contributor.
 

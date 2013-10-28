@@ -161,9 +161,64 @@ test('SELECT b,a from table1 WHERE b = "bvalue2" and a = "avalue1"', function(t)
     var records = 0;
 
     s1.on('data', function(d) {
-      records++;
+      ++records;
     }).on('end', function() {
       t.equal(records, 0, 'no records found');
+      t.end();
+    });
+  });
+});
+
+test('SELECT * FROM table1 LIMIT 2', function(t) {
+
+  var table1 = db.sublevel('table1');
+
+  table1.batch([
+    { type: 'put', key: 'testkey1', value: { a: 'avalue1', b: 'bvalue1' } },
+    { type: 'put', key: 'testkey2', value: { a: 'avalue2', b: 'bvalue2' } },
+    { type: 'put', key: 'testkey3', value: { a: 'avalue3', b: 'bvalue3' } },
+    { type: 'put', key: 'testkey4', value: { a: 'avalue4', b: 'bvalue4' } },
+    { type: 'put', key: 'testkey5', value: { a: 'avalue5', b: 'bvalue5' } }
+  ], function(err) {
+
+    if (err) {
+      return t.notOk(true, err);
+    }
+    
+    var s1 = db.query('SELECT * FROM table1 LIMIT 2');
+ 
+    var records = 0;
+
+    s1.on('data', function(d) {
+      ++records;
+    }).on('end', function() {
+      t.equal(records, 2, 'no records found');
+      t.end();
+    });
+  });
+});
+
+test('SELECT * FROM table1 ORDER BY c ASC, d DESC', function(t) {
+
+  var table1 = db.sublevel('table1');
+
+  table1.batch([
+    { type: 'put', key: 'testkey1', value: { a: 'avalue1', b: 'bvalue1', c: '5', d: '5' } },
+    { type: 'put', key: 'testkey2', value: { a: 'avalue2', b: 'bvalue2', c: '4', d: '4' } },
+    { type: 'put', key: 'testkey3', value: { a: 'avalue3', b: 'bvalue3', c: '3', d: '3' } },
+    { type: 'put', key: 'testkey4', value: { a: 'avalue4', b: 'bvalue4', c: '2', d: '2' } },
+    { type: 'put', key: 'testkey5', value: { a: 'avalue5', b: 'bvalue5', c: '1', d: '1' } }
+  ], function(err) {
+
+    if (err) {
+      return t.notOk(true, err);
+    }
+    
+    var s1 = db.query('SELECT * FROM table1 ORDER BY c ASC, d DESC');
+ 
+    s1.on('data', function(d) {
+      console.log(d)
+    }).on('end', function() {
       t.end();
     });
   });
